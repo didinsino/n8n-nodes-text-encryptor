@@ -1,12 +1,14 @@
 {
     "name": "n8n-nodes-text-encryptor",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "description": "n8n community node to encrypt and decrypt text using AES-256-CBC algorithm",
     "license": "MIT",
     "homepage": "",
     "keywords": [
         "n8n-community-node-package",
-        "encryption", "decryption", "crypto"
+        "encryption",
+        "decryption",
+        "crypto"
     ],
     "author": {
         "name": "Didin Sino",
