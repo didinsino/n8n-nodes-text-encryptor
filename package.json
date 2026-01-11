@@ -1,0 +1,49 @@
+{
+    "name": "n8n-nodes-text-encryptor",
+    "version": "1.0.0",
+    "description": "n8n community node to encrypt and decrypt text using AES-256-CBC algorithm",
+    "license": "MIT",
+    "homepage": "",
+    "keywords": [
+        "n8n-community-node-package"
+    ],
+    "author": {
+        "name": "Didin Sino",
+        "email": "di2nsino@gmail.com"
+    },
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/didinsino/n8n-nodes-text-encryptor.git"
+    },
+    "scripts": {
+        "build": "n8n-node build",
+        "build:watch": "tsc --watch",
+        "dev": "n8n-node dev",
+        "lint": "n8n-node lint",
+        "lint:fix": "n8n-node lint --fix",
+        "release": "n8n-node release",
+        "prepublishOnly": "n8n-node prerelease"
+    },
+    "files": [
+        "dist"
+    ],
+    "n8n": {
+        "n8nNodesApiVersion": 1,
+        "strict": true,
+        "credentials": [],
+        "nodes": [
+            "dist/nodes/TextEncryptor/TextEncryptor.node.js"
+        ]
+    },
+    "devDependencies": {
+        "@n8n/node-cli": "*",
+        "@types/node": "^25.0.5",
+        "eslint": "9.32.0",
+        "prettier": "3.6.2",
+        "release-it": "^19.0.4",
+        "typescript": "5.9.2"
+    },
+    "peerDependencies": {
+        "n8n-workflow": "*"
+    }
+}
