@@ -1,46 +1,22 @@
 # n8n-nodes-text-encrypt
 
-This is an n8n community node. It lets you use _app/service name_ in your n8n workflows.
-
-_App/service name_ is _one or two sentences describing the service this node integrates with_.
-
-[n8n](https://n8n.io/) is a [fair-code licensed](https://docs.n8n.io/sustainable-use-license/) workflow automation platform.
-
-[Installation](#installation)
-[Operations](#operations)
-[Credentials](#credentials)
-[Compatibility](#compatibility)
-[Usage](#usage)
-[Resources](#resources)
-[Version history](#version-history)
+This is an n8n community node. It lets you encrypt and decrypt text using node crypto module with AES-256-CBC algorithm.
 
 ## Installation
 
 Follow the [installation guide](https://docs.n8n.io/integrations/community-nodes/installation/) in the n8n community nodes documentation.
 
-## Operations
-
-_List the operations supported by your node._
-
-## Credentials
-
-_If users need to authenticate with the app/service, provide details here. You should include prerequisites (such as signing up with the service), available authentication methods, and how to set them up._
-
-## Compatibility
-
-_State the minimum n8n version, as well as which versions you test against. You can also include any known version incompatibility issues._
-
 ## Usage
 
-_This is an optional section. Use it to help users with any difficult or confusing aspects of the node._
+1. Add `Text Encryptor` node to your workflow.
 
-_By the time users are looking for community nodes, they probably already know n8n basics. But if you expect new users, you can link to the [Try it out](https://docs.n8n.io/try-it-out/) documentation to help them get started._
+    ![Text Encryptor node](./assets/usage-screenshot-1.png)
+    
+2. Select the operation: `encrypt` or `decrypt`.
 
-## Resources
+    ![Text Encryptor node](./assets/usage-screenshot-2.png)
 
-* [n8n community nodes documentation](https://docs.n8n.io/integrations/#community-nodes)
-* _Link to app/service documentation._
-
-## Version history
-
-_This is another optional section. If your node has multiple versions, include a short description of available versions and what changed, as well as any compatibility impact._
+3. Provide the text to be processed.
+4. Provide the secret key _(optional, leave empty to use the default key)_.
+5. For decryption, provide the same secret key used for encryption.
+6. Connect the node to other nodes as needed in your workflow.
