@@ -1,6 +1,6 @@
 # n8n-nodes-text-encrypt
 
-This is an n8n community node. It lets you encrypt and decrypt text using node crypto module with AES-256-CBC algorithm.
+This is an n8n community node. It lets you encrypt and decrypt text using built in node.js crypto module. There are two algorithms available: `AES-256-GCM` or `AES-256-CBC`.
 
 ## Installation
 
@@ -18,5 +18,6 @@ Follow the [installation guide](https://docs.n8n.io/integrations/community-nodes
 
 3. Provide the text to be processed.
 4. Provide the secret key _(optional, leave empty to use the default key)_.
-5. For decryption, provide the same secret key used for encryption.
-6. Connect the node to other nodes as needed in your workflow.
+5. Select the algorithm: `AES-256-GCM` _(default)_ or `AES-256-CBC`.
+6. For decryption, provide the same secret key and algorithm used for encryption.
+7. Connect the node to other nodes as needed in your workflow.

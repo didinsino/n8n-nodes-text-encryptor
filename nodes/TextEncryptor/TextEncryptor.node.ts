@@ -1,8 +1,9 @@
 import type { IExecuteFunctions, INodeExecutionData, INodeType, INodeTypeDescription } from 'n8n-workflow';
 import { NodeConnectionTypes, NodeOperationError } from 'n8n-workflow';
-import { encryptString, decryptString } from './functions';
+import { encryptString, decryptString, Algorithm } from './functions';
 
 const DEFAULT_SECRET_KEY = 'FOmd23PkX0QxHJc7S59sEjg6FmaRmCef';
+const DEFAULT_ALGORITHM = 'aes-256-gcm';
 
 export class TextEncryptor implements INodeType {
 	description: INodeTypeDescription = {
@@ -32,13 +33,13 @@ export class TextEncryptor implements INodeType {
 						name: 'Encrypt',
 						value: 'encrypt',
 						description: 'Encrypt the provided text',
-						action: 'Encrypt the provided text',
+						action: 'Encrypt text',
 					},
 					{
 						name: 'Decrypt',
 						value: 'decrypt',
 						description: 'Decrypt the provided text',
-						action: 'Decrypt the provided text',
+						action: 'Decrypt text',
 					}
 				],
 				default: 'encrypt',
@@ -57,7 +58,7 @@ export class TextEncryptor implements INodeType {
 				displayName: 'Options',
 				name: 'options',
 				type: 'collection',
-				placeholder: 'Add secret key',
+				placeholder: 'Add options',
 				default: {},
 				options: [
 					{
@@ -71,6 +72,25 @@ export class TextEncryptor implements INodeType {
 						},
 						description: 'The secret key used for encryption/decryption. Must be the same for both operations. Leave empty to use default key',
 					},
+					{
+						displayName: 'Algorithm',
+						name: 'algorithm',
+						type: 'options',
+						options: [
+							{
+								name: 'AES-256-GCM',
+								value: 'aes-256-gcm',
+								description: 'AES with a 256-bit key in Galois/Counter Mode (GCM)',
+							},
+							{
+								name: 'AES-256-CBC',
+								value: 'aes-256-cbc',
+								description: 'AES with a 256-bit key in Cipher Block Chaining (CBC) mode',
+							},
+						],
+						default: 'aes-256-gcm',
+						description: 'The encryption algorithm to use. Must be the same for both encrypt and decrypt operations.',
+					}
 				]
 			},
 		],
@@ -81,18 +101,21 @@ export class TextEncryptor implements INodeType {
 
 		let item: INodeExecutionData;
 		let text: string;
+		let secretKey: string;
+		let algorithm: Algorithm;
 
 		const returnItems: INodeExecutionData[] = [];
-		const options = this.getNodeParameter('options', 0) as { secretKey?: string };
+		const options = this.getNodeParameter('options', 0) as { secretKey?: string, algorithm?: string };
 		const operation = this.getNodeParameter('operation', 0) as string;
-		const secretKey = options.secretKey || DEFAULT_SECRET_KEY;
 
 		for (let itemIndex = 0; itemIndex < items.length; itemIndex++) {
 			try {
 				text = this.getNodeParameter('text', itemIndex, '') as string;
+				secretKey = options.secretKey || DEFAULT_SECRET_KEY;
+				algorithm = options.algorithm as Algorithm || DEFAULT_ALGORITHM;
 				item = items[itemIndex];
 
-				const result = operation === 'encrypt' ? encryptString(text, secretKey) : decryptString(text, secretKey);
+				const result = operation === 'encrypt' ? encryptString(text, secretKey, algorithm) : decryptString(text, secretKey, algorithm);
 
 				item.json = {
 					original: text,
@@ -102,19 +125,19 @@ export class TextEncryptor implements INodeType {
 				returnItems.push(item);
 			} catch (error) {
 				// Enhance error messages for common issues
-				if (error.code === 'ERR_OSSL_BAD_DECRYPT' && operation === 'decrypt') {
-					error.message = 'Invalid secret key';
-				} else if (error.code === 'ERR_CRYPTO_INVALID_IV' && operation === 'decrypt') {
-					error.message = 'Encrypted text is invalid or corrupted.';
+				if (operation === 'decrypt') {
+					if (error.code === 'ERR_OSSL_BAD_DECRYPT' || error.code === 'ERR_CRYPTO_INVALID_IV' || error.message.includes('Unsupported state or unable to authenticate data')) {
+						error.message = 'Decryption failed. Incorrect secret key or corrupted/invalid encrypted text';
+					}
 				}
-				
+
 				if (this.continueOnFail()) {
 					returnItems.push({
 						json: { error: (error as Error).message },
 						pairedItem: { item: itemIndex },
 					});
 					continue;
-				} 
+				}
 
 				// Adding `itemIndex` allows other workflows to handle this error
 				if (error.context) {
@@ -123,7 +146,7 @@ export class TextEncryptor implements INodeType {
 					error.context.itemIndex = itemIndex;
 					throw error;
 				}
-				
+
 				throw new NodeOperationError(this.getNode(), error, {
 					itemIndex,
 				});
