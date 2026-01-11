@@ -8,7 +8,7 @@ export class TextEncryptor implements INodeType {
 	description: INodeTypeDescription = {
 		displayName: 'Text Encryptor',
 		name: 'textEncryptor',
-		icon: { light: 'file:textEncryptor.icon.svg', dark: 'file:textEncryptor.icon.svg' },
+		icon: { light: 'file:icon.light.svg', dark: 'file:icon.dark.svg' },
 		group: ['transform'],
 		version: 1,
 		description: 'Simple text encrypt and decrypt',
@@ -24,6 +24,7 @@ export class TextEncryptor implements INodeType {
 				displayName: 'Operation',
 				name: 'operation',
 				type: 'options',
+				noDataExpression: true,
 				description: 'Choose whether to encrypt or decrypt the text',
 				required: true,
 				options: [
@@ -31,11 +32,13 @@ export class TextEncryptor implements INodeType {
 						name: 'Encrypt',
 						value: 'encrypt',
 						description: 'Encrypt the provided text',
+						action: 'Encrypt the provided text',
 					},
 					{
 						name: 'Decrypt',
 						value: 'decrypt',
 						description: 'Decrypt the provided text',
+						action: 'Decrypt the provided text',
 					}
 				],
 				default: 'encrypt',
@@ -80,7 +83,7 @@ export class TextEncryptor implements INodeType {
 		let text: string;
 
 		const returnItems: INodeExecutionData[] = [];
-		const options = this.getNodeParameter('options', 0) as any;
+		const options = this.getNodeParameter('options', 0) as { secretKey?: string };
 		const operation = this.getNodeParameter('operation', 0) as string;
 		const secretKey = options.secretKey || DEFAULT_SECRET_KEY;
 
@@ -98,8 +101,7 @@ export class TextEncryptor implements INodeType {
 				}
 				returnItems.push(item);
 			} catch (error) {
-				// ERR_OSSL_BAD_DECRYPT
-				// console.log('CODE::::', error.code);
+				// Enhance error messages for common issues
 				if (error.code === 'ERR_OSSL_BAD_DECRYPT' && operation === 'decrypt') {
 					error.message = 'Invalid secret key';
 				} else if (error.code === 'ERR_CRYPTO_INVALID_IV' && operation === 'decrypt') {
