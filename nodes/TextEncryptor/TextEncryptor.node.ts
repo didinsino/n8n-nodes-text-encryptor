@@ -126,7 +126,10 @@ export class TextEncryptor implements INodeType {
 			} catch (error) {
 				// Enhance error messages for common issues
 				if (operation === 'decrypt') {
-					if (error.code === 'ERR_OSSL_BAD_DECRYPT' || error.code === 'ERR_CRYPTO_INVALID_IV' || error.message.includes('Unsupported state or unable to authenticate data')) {
+					if (error.code === 'ERR_OSSL_BAD_DECRYPT'
+						|| error.code === 'ERR_CRYPTO_INVALID_IV'
+						|| error.message.includes('Unsupported state or unable to authenticate data')
+						|| error.message.includes('Invalid authentication tag length')) {
 						error.message = 'Decryption failed. Incorrect secret key or corrupted/invalid encrypted text';
 					}
 				}
