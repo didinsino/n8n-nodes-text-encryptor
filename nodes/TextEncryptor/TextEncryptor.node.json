@@ -6,12 +6,12 @@
 	"resources": {
 		"credentialDocumentation": [
 			{
-				"url": "https://github.com/didinsino/n8n-nodes-text-encryptor"
+				"url": "https://github.com/didinsino/n8n-nodes-text-encryptor#readme"
 			}
 		],
 		"primaryDocumentation": [
 			{
-				"url": "https://github.com/didinsino/n8n-nodes-text-encryptor"
+				"url": "https://github.com/didinsino/n8n-nodes-text-encryptor#readme"
 			}
 		]
 	}
